@@ -1,6 +1,7 @@
 class Incident
   include MongoMapper::Document
 
+  key :case_number, Integer
   key :date, Date
   key :charge, String
   key :description, String

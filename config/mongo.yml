@@ -1,0 +1,18 @@
+defaults: &defaults
+  host: 127.0.0.1
+  port: 27017
+
+development:
+  <<: *defaults
+  database: crime_maps_development
+
+test:
+  <<: *defaults
+  database: crime_maps_test
+
+# set these environment variables on your prod server
+production:
+  <<: *defaults
+  database: crime_maps
+  username: <%= ENV['MONGO_USERNAME'] %>
+  password: <%= ENV['MONGO_PASSWORD'] %>

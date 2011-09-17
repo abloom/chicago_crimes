@@ -13,4 +13,19 @@ class Incident
 
   ensure_index :charge
   ensure_index [[:location, "2d"]] # geo-spacial index
+
+  def self.reduce_in_range(center, distance)
+    center_string = center.join("_").gsub(/-|\./, "_")
+    output_collection = "reduced_incidents_#{center_string}_#{distance}"
+
+    collection.map_reduce("mapper", "reducer", {
+      :query => {
+        :location => {
+          :$near => center,
+          :$maxDistance => distance
+        }
+      },
+      out: output_collection
+    })
+  end
 end

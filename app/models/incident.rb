@@ -9,6 +9,8 @@ class Incident
   key :domestic, Boolean
   key :beat, Integer
   key :ward, Integer
-  key :latitude, Float
-  key :longitude, Float
+  key :location, Array
+
+  ensure_index :charge
+  ensure_index [[:location, "2d"]] # geo-spacial index
 end

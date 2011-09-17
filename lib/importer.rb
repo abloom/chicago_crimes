@@ -12,6 +12,11 @@ module Importer
 
     CSV.foreach(CSVPath, :headers => true) do |row|
       date = Date.strptime(row['Date'], "%m/%d/%Y")
+      location  = [
+        row['Latitude'].to_f,
+        row['Longitude'].to_f
+      ]
+
       Incident.create!(
         :date        => date,
         :case_number => row['Case Number'],
@@ -21,8 +26,8 @@ module Importer
         :domestic    => row['Domestic'],
         :beat        => row['Beat'],
         :ward        => row['Ward'],
-        :latitude    => row['Latitude'],
-        :longitude   => row['Longitude'])
+        :location    => location)
+
       pb.inc
     end
 

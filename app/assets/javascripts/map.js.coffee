@@ -1,6 +1,15 @@
 class Map extends Backbone.View
-  #initialize: ->
-    #@options.incidents.bind "add", @render, @
+  initialize: ->
+    Incidents.bind "add", @addOne, @
+    Incidents.bind "reset", @addAll, @
+
+    Incidents.fetch()
+
+  addAll: ->
+    Incidents.each(@addOne, @)
+
+  addOne: (incident) ->
+    @_createMarker(incident)
 
   render: ->
     options =
@@ -9,8 +18,6 @@ class Map extends Backbone.View
       mapTypeId: google.maps.MapTypeId.ROADMAP
 
     @map = new google.maps.Map(@el[0], options)
-    @options.incidents.each(((incident) ->
-      @_createMarker(incident)), @)
 
   _createMarker: (incident) ->
     new google.maps.Marker(
@@ -22,9 +29,7 @@ class Map extends Backbone.View
     )
 
 $ ->
-  # render the initial map
   window.map = new Map
-    incidents: incidents
     el: $('#map')
 
   window.map.render()

@@ -5,13 +5,8 @@ class window.Incident extends Backbone.Model
     delete params.location
     @set(params)
 
-class Incidents extends Backbone.Collection
+class IncidentCollection extends Backbone.Collection
   model: Incident
   url: "/incidents"
 
-window.incidents = new Incidents
-
-$ ->
-  # add all the Incident JSON to the incidents collection
-  _(incidentData).each (obj) ->
-    incidents.add new Incident(obj)
+window.Incidents = new IncidentCollection

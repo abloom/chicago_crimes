@@ -1,5 +1,4 @@
 CrimeMaps::Application.routes.draw do
-  resources :incidents
-
+  match '/density' => "incidents#density"
   root :to => "application#index"
 end

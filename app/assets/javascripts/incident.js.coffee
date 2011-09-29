@@ -5,7 +5,7 @@ class window.Incident extends Backbone.Model
     delete params.location
     @set(params)
 
-class IncidentCollection extends Backbone.Collection
+class window.IncidentCollection extends Backbone.Collection
   model: Incident
   url: "/incidents"
 

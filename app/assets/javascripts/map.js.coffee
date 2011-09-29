@@ -1,14 +1,4 @@
 class Map extends Backbone.View
-  initialize: ->
-    Incidents.bind "add", @addOne, @
-    Incidents.bind "reset", @addAll, @
-
-  addAll: ->
-    Incidents.each(@addOne, @)
-
-  addOne: (incident) ->
-    #@_createMarkerFromIncident(incident)
-
   render: ->
     bounds = @options.bounds
     latC   = bounds.max.latitude - bounds.min.latitude
@@ -24,55 +14,91 @@ class Map extends Backbone.View
       mapTypeId: google.maps.MapTypeId.ROADMAP
 
     @map = new google.maps.Map(@el[0], options)
-    if @options.markCenter then @_createMarker(latC, longC)
-    if @options.drawBounds then @_drawBoundingBox()
+    if @options.drawBounds then @_drawBorder()
+    if @options.drawGrid   then @_drawGrid()
 
-  _createMarkerFromIncident: (incident) ->
-    @_createMarker(
-      incident.get("latitude"),
-      incident.get("longitude")
-    )
+  zones: ->
+    return @_zones if @_zones
 
-  _createMarker: (latitude, longitude) ->
-    new google.maps.Marker(
-      map: @map
-      position: @_latLng(latitude, longitude)
-    )
+    @_zones = []
+    bounds = @options.bounds
+    latInterval = (bounds.max.latitude - bounds.min.latitude) / @options.divisions
+    longInterval = (bounds.max.longitude - bounds.min.longitude) / @options.divisions
+
+    [0..@options.divisions-1].forEach((x) ->
+      @_zones[x] = []
+      minLat = bounds.min.latitude + (x * latInterval)
+      maxLat = bounds.min.latitude + ((x+1) * latInterval)
+
+      [0..@options.divisions-1].forEach((y) ->
+        minLong = bounds.min.longitude + (y * longInterval)
+        maxLong = bounds.min.longitude + ((y+1) * longInterval)
+
+        @_zones[x][y] = new Zone(
+          map: @,
+          minLatitude: minLat
+          maxLatitude: maxLat
+          minLongitude: minLong
+          maxLongitude: maxLong)
+        @_zones[x][y].fetch()
+      ,@)
+    ,@)
+
+    @_zones
+
+  zone: (x, y) ->
+    @zones()[x][y]
 
   _latLng: (latitude, longitude) ->
     new google.maps.LatLng(latitude, longitude)
 
-  _drawBoundingBox: ->
+  _drawGrid: ->
+    [0..@options.divisions-1].forEach((x) ->
+      [0..@options.divisions-1].forEach((y) ->
+        @zone(x,y).drawBox()
+      ,@)
+    ,@)
+
+  _drawBorder: ->
     bounds = @options.bounds
+    @drawBox("#FF0000",
+      bounds.max.latitude, bounds.min.latitude,
+      bounds.max.longitude, bounds.min.longitude
+    )
+
+  drawBox: (color, lat1, lat2, long1, long2) ->
     boxCoords = [
-      @_latLng(bounds.max.latitude, bounds.max.longitude),
-      @_latLng(bounds.min.latitude, bounds.max.longitude),
-      @_latLng(bounds.min.latitude, bounds.min.longitude),
-      @_latLng(bounds.max.latitude, bounds.min.longitude)
+      @_latLng(lat1, long1),
+      @_latLng(lat2, long1),
+      @_latLng(lat2, long2),
+      @_latLng(lat1, long2)
     ]
 
-    @_boundingBox = new google.maps.Polygon(
+    box = new google.maps.Polygon(
       paths: boxCoords,
-      strokeColor: "#FF0000",
+      strokeColor: color,
       strokeOpacity: 0.8,
       strokeWeight: 2,
-      fillColor: "#FF0000",
-      fillOpacity: 0.15
+      fillColor: color,
+      fillOpacity: 0
     )
-    @_boundingBox.setMap(@map)
+    box.setMap(@map)
+    box
 
 $ ->
+  bounds =
+    max:
+      latitude: 42.02302490811244
+      longitude: -87.52438878911826
+    min:
+      latitude: 41.64458010539843
+      longitude: -87.93430511694018
+
   window.map = new Map
     el: $('#map'),
-    #markCenter: true,
-    drawBounds: true,
-    bounds:
-      max:
-        latitude: 42.02302490811244
-        longitude: -87.52438878911826
-      min:
-        latitude: 41.64458010539843
-        longitude: -87.93430511694018
+    #drawBounds: true,
+    drawGrid: true,
+    divisions: 10,
+    bounds: bounds
 
-  window.map.render()
-  window.Incidents.fetch()
+  map.render()

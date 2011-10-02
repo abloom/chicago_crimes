@@ -13,6 +13,9 @@ class Incident
   key :ward, Integer
   key :location, Array
 
+  ensure_index :charge
+  ensure_index [[:location, "2d"]] # geo-spacial index
+
   class << self
     def density_in_box(x1, x2, y1, y2)
       sha1 = Digest::SHA1.hexdigest [x1, x2, y1, y2].join(" ")

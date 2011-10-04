@@ -17,5 +17,5 @@ end
 gem 'jquery-rails'
 
 group :development do
-  gem "ruby-progressbar"
+  gem "ruby-progressbar", :require => false
 end

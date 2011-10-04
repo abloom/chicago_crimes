@@ -1,5 +1,3 @@
-require 'digest/sha1'
-
 class Incident
   include MongoMapper::Document
 
@@ -13,44 +11,93 @@ class Incident
   key :ward, Integer
   key :location, Array
 
+  ensure_index :date
   ensure_index :charge
   ensure_index [[:location, "2d"]] # geo-spacial index
 
   class << self
-    def density_in_box(x1, x2, y1, y2)
-      sha1 = Digest::SHA1.hexdigest [x1, x2, y1, y2].join(" ")
-
-      collection.map_reduce(mapper, reducer, {
-        :query => {
-          :location => {
-            :$within => {
-              :$box => [[x1, y1], [x2, y2]]
-            }
+    def density_in_cell_for_day_range(x, y, divisions, date1, date2)
+      coordinates = Bounds.box(x, y, divisions)
+      query = {
+        :location => {
+          :$within => {
+            :$box => coordinates
           }
         },
-        out: "density_#{sha1}"
-      }).find.to_a
+        :date => {
+          :$gte => date1,
+          :$lte => date2
+        }
+      }
+      charges = collection.distinct("charge", query)
+      map = mapper(x, y, date1, date2, coordinates)
+      reduce = reducer(charges)
+
+      collection.map_reduce(map, reduce, {
+        query: query,
+        out: { merge: "densities" }
+      })
     end
 
   private
-    def mapper
+    def cell_query(coordinates)
+      query = {
+        :location => {
+          :$within => {
+            :$box => coordinates
+          }
+        }
+      }
+    end
+
+    def mapper(x, y, date1, date2, coordinates)
+      sha = Digest::SHA1.hexdigest [x, y, date1.to_i, date2.to_i].join(",")
+      data = {
+        x: x,
+        y: y,
+        start_date: date1,
+        end_date: date2,
+        bounds: [{
+          name: "min",
+          location: coordinates[0]
+        }, {
+          name: "max",
+          location: coordinates[1]
+        }]
+      }
+
       <<-JS
       function() {
-        emit(this.charge, { count: 1 });
+        var data = #{data.to_json};
+
+        data.start_date = ISODate(data.start_date);
+        data.end_date = ISODate(data.end_date);
+        data.charges = {};
+        data.charges[this.charge] = 1;
+
+        emit("#{sha}", data);
       }
       JS
     end
 
-    def reducer
+    def reducer(charges)
       <<-JS
       function(k, values) {
-        var results = 0;
+        var results = values.pop(),
+            charges = #{charges.to_json};
 
         values.forEach(function(value) {
-          results += value.count;
+          var key;
+
+          charges.forEach(function(charge) {
+            if (value.charges[charge]) {
+              if (!results.charges[charge]) { results.charges[charge] = 0; }
+              results.charges[charge] += value.charges[charge];
+            }
+          });
         });
 
-        return { count: results };
+        return results;
       }
       JS
     end

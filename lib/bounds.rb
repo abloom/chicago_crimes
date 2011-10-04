@@ -10,14 +10,18 @@ module Bounds
   extend ActiveSupport::Memoizable
   extend self
 
-  MongoMapper.database['bounds'].find.to_a.each do |hsh|
+  def values
+    MongoMapper.database['bounds'].find.to_a
+  end
+
+  values.each do |hsh|
     define_method(hsh["_id"].underscore) { hsh["value"] }
   end
 
   # Returns a 2 dimensional array of coordinates [lat, long] going from 0 to
   # divisions inclusive. the grid is determined by the number of divisions and
   # is bounded by min and max bounds held by this module
-  def grid(divisions = 10)
+  def grid(divisions)
     lat_distance = max_latitude - min_latitude
     long_distance = max_longitude - min_longitude
     grid = []
@@ -36,10 +40,10 @@ module Bounds
   end
   memoize :grid
 
-  def box(x, y)
+  def box(x, y, divisions)
     [
-      grid[x][y],
-      grid[x+1][y+1]
+      grid(divisions)[x][y],
+      grid(divisions)[x+1][y+1]
     ]
   end
 end

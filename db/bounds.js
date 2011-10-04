@@ -1,4 +1,7 @@
 m = function() {
+  emit("minDate", this.date);
+  emit("maxDate", this.date);
+
   emit("maxLatitude", this.location[0]);
   emit("minLatitude", this.location[0]);
 
@@ -7,26 +10,24 @@ m = function() {
 };
 
 r = function(key, values) {
-  var cleaned = [], func;
-
-  switch(key) {
-    case "maxLatitude":
-    case "maxLongitude":
-      func = Math.max;
-      break;
-    case "minLatitude":
-    case "minLongitude":
-      func = Math.min;
-      break;
-  }
+  var cleaned = [], func, value;
 
   values.forEach(function(value) {
-    if (value !== 0) {
+    if (value && (value !== 0)) {
+      if (key === "minDate" || key === "maxDate") { value = value.getTime(); }
       cleaned.push(value);
     }
   });
 
-  return func.apply(Math, cleaned);
+  if (/^min/.test(key)) {
+    func = Math.min;
+  } else {
+    func = Math.max;
+  }
+
+  value = func.apply(Math, cleaned);
+  if (key === "minDate" || key === "maxDate") { value = new Date(value); }
+  return value;
 };
 
 db.runCommand({

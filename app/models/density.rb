@@ -1,29 +1,39 @@
 class Density
+  class Value
+    class Bound
+      include MongoMapper::EmbeddedDocument
+      key :name
+      key :location, Array
+    end
+
+    include MongoMapper::EmbeddedDocument
+    key :x, Integer
+    key :y, Integer
+    key :start_date, Date
+    key :end_date, Date
+    key :charges, Hash
+
+    many :bounds, :class => Bound
+
+    def total
+      charges.values.sum.to_i
+    end
+
+    def coordinates
+      [bounds.first.location, bounds.last.location]
+    end
+  end
+
   include MongoMapper::Document
 
   ensure_index :'value.start_date'
   ensure_index :'value.end_date'
-  ensure_index [[:'values.bounds.location', "2d"]]
+  one :value, :class => Value
 
-  key :value
+  delegate :x, :y, :start_date, :end_date, :charges, :total, :coordinates,
+    :to => :value
 
-  def x
-    _id.split(",")[0].to_i
-  end
-
-  def y
-    _id.split(",")[1].to_i
-  end
-
-  def charges
-    value.keys
-  end
-
-  def incidents(charge)
-    value[charge].to_i
-  end
-
-  def total
-    value.values.sum.to_i
+  def self.by_date(date)
+    where(:'value.start_date'.lte => date, :'value.end_date'.gte => date)
   end
 end

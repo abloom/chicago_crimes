@@ -1,14 +1,16 @@
 class DensitiesController < ApplicationController
   def index
-    data = Density.all.map do |d|
+    date = Date.parse(params[:date]).to_time
+    render json: serialize(Density.by_date(date))
+  end
+
+private
+  def serialize(objs)
+    objs.map do |obj|
       {
-        x: d.x,
-        y: d.y,
-        coordinates: Bounds.box(d.x, d.y, 100),
-        incidents: d.total
+        coordinates: obj.coordinates,
+        charges: obj.charges
       }
     end
-
-    render json: data
   end
 end

@@ -8,3 +8,9 @@
 //= require jquery_ujs
 //= require underscore
 //= require backbone
+//= require heatmap
+//= require heatmap-gmaps
+//
+//= require zone
+//= require map
+//= require bootstrap

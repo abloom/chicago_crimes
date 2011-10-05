@@ -1,11 +1,5 @@
-<% content_for :head do %>
-  <%= stylesheet_link_tag "landing" %>
-  <%= javascript_include_tag "landing" %>
-  <%= javascript_include_tag "http://maps.googleapis.com/maps/api/js?sensor=false" %>
-
   <script type="text/javascript">
     Map.boundsData = <%= @bounds.to_json.html_safe %>;
   </script>
-<% end %>
 
 <div id="map"></div>

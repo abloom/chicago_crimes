@@ -11,11 +11,15 @@ module Bounds
   extend self
 
   def values
-    MongoMapper.database['bounds'].find.to_a
+    MongoMapper.database['bounds'].find.to_a.inject({}) do |hsh, value|
+      hsh[value["_id"]] = value["value"]
+      hsh
+    end
   end
+  memoize :values
 
-  values.each do |hsh|
-    define_method(hsh["_id"].underscore) { hsh["value"] }
+  values.each do |(k, v)|
+    define_method(k.underscore) { v }
   end
 
   # Returns a 2 dimensional array of coordinates [lat, long] going from 0 to

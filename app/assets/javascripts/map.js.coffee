@@ -1,10 +1,10 @@
 class window.Map extends Backbone.View
   render: ->
     bounds = @options.bounds
-    latC   = bounds.max.latitude - bounds.min.latitude
-    latC   = (latC/2) + bounds.min.latitude
-    longC  = bounds.max.longitude - bounds.min.longitude
-    longC  = (longC/2) + bounds.min.longitude
+    latC   = bounds.maxLatitude - bounds.minLatitude
+    latC   = (latC/2) + bounds.minLatitude
+    longC  = bounds.maxLongitude - bounds.minLongitude
+    longC  = (longC/2) + bounds.minLongitude
 
     options =
       zoom: 11,
@@ -14,7 +14,17 @@ class window.Map extends Backbone.View
       mapTypeId: google.maps.MapTypeId.ROADMAP
 
     @map = new google.maps.Map(@el[0], options)
+    @heatmap = new HeatmapOverlay(@map, {
+      radius  : 15,
+      visible : true,
+      opacity : 60
+    });
+
     if @options.drawBounds then @_drawBorder()
+
+    google.maps.event.addListenerOnce(@map, "idle", =>
+      @trigger("ready")
+    )
 
   _latLng: (latitude, longitude) ->
     new google.maps.LatLng(latitude, longitude)
@@ -44,3 +54,6 @@ class window.Map extends Backbone.View
     )
     box.setMap(@map)
     box
+
+  setHeatmapDataSet: (dataset) ->
+    @heatmap.setDataSet(dataset)

@@ -16,6 +16,8 @@ class Incident
   ensure_index [[:location, "2d"]] # geo-spacial index
 
   class << self
+    extend ActiveSupport::Memoizable
+
     def density_in_cell_for_day_range(x, y, divisions, date1, date2)
       coordinates = Bounds.box(x, y, divisions)
       query = {
@@ -29,15 +31,18 @@ class Incident
           :$lte => date2
         }
       }
-      charges = collection.distinct("charge", query)
-      map = mapper(x, y, date1, date2, coordinates)
-      reduce = reducer(charges)
 
-      collection.map_reduce(map, reduce, {
+      map = mapper(x, y, date1, date2, coordinates)
+      collection.map_reduce(map, reducer, {
         query: query,
         out: { merge: "densities" }
       })
     end
+
+    def charges
+      collection.distinct("charge")
+    end
+    memoize :charges
 
   private
     def cell_query(coordinates)
@@ -80,7 +85,7 @@ class Incident
       JS
     end
 
-    def reducer(charges)
+    def reducer
       <<-JS
       function(k, values) {
         var results = values.pop(),

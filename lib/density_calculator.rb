@@ -3,22 +3,22 @@ require 'progressbar'
 module DensityCalculator
   extend self
 
-  def run(divisions = 100)
-    days = (Bounds.min_date.to_time - Bounds.max_date.to_time).abs/86400
-    date = Bounds.min_date.beginning_of_month
-    pb = ProgressBar.new("Densities", divisions*divisions*(days/30))
+  def run(divisions = 50)
+    start_date = Bounds.min_date.beginning_of_year
+    increments = Bounds.max_date.year - Bounds.min_date.year
+    pb = ProgressBar.new("Densities", divisions*divisions*increments)
 
-    while(date < Bounds.max_date) do
-      end_of_month = date.end_of_month
+    while(start_date < Bounds.max_date) do
+      end_date = start_date.end_of_year
 
       0.upto(divisions-1) do |x|
         0.upto(divisions-1) do |y|
-          coll = Incident.density_in_cell_for_day_range(x, y, divisions, date, end_of_month)
+          coll = Incident.density_in_cell_for_day_range(x, y, divisions, start_date, end_date)
           pb.inc
         end
       end
 
-      date = date.next_month
+      start_date = start_date.next_year
     end
 
     pb.finish

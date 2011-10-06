@@ -9,7 +9,11 @@ class window.Map extends Backbone.View
     options =
       zoom: 11,
       disableDefaultUI: true,
-      zoomControl: true,
+      disableDoubleClickZoom: true,
+      draggable: false,
+      keyboardShortcuts: false,
+      mapTypeControl: false,
+      scrollwheel: false,
       center: @_latLng(latC, longC)
       mapTypeId: google.maps.MapTypeId.ROADMAP
 
@@ -32,8 +36,8 @@ class window.Map extends Backbone.View
   _drawBorder: ->
     bounds = @options.bounds
     @drawBox("#FF0000",
-      bounds.max.latitude, bounds.min.latitude,
-      bounds.max.longitude, bounds.min.longitude
+      bounds.maxLatitude, bounds.minLatitude,
+      bounds.maxLongitude, bounds.minLongitude
     )
 
   drawBox: (color, lat1, lat2, long1, long2) ->

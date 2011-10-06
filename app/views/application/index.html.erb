@@ -1,5 +1,8 @@
-  <script type="text/javascript">
-    Map.boundsData = <%= @bounds.to_json.html_safe %>;
-  </script>
+<script type="text/javascript">
+  Map.boundsData = <%= @bounds.to_json.html_safe %>;
+</script>
 
-<div id="map"></div>
+<div id="wrapper">
+  <div id="controls"></div>
+  <div id="map"></div>
+</div>

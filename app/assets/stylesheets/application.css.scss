@@ -11,11 +11,26 @@ html {
   body {
     height: 100%;
     margin: 0;
-    padding: 0
+    padding: 0;
+    background-color: grey;
   }
 }
 
+#wrapper {
+  clear: both;
+  margin: auto;
+  width: 960px;
+}
+
+#controls {
+  background-color: white;
+  float: left;
+  height: 500px;
+  width: 340px;
+}
+
 #map {
-  height: 100%;
-  width: 100%;
+  float: left;
+  height: 760px;
+  width: 620px;
 }

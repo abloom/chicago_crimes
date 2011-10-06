@@ -1,4 +1,4 @@
-class window.Map extends Backbone.View
+class window.MapView extends Backbone.View
   render: ->
     bounds = @options.bounds
     latC   = bounds.maxLatitude - bounds.minLatitude
@@ -17,28 +17,35 @@ class window.Map extends Backbone.View
       center: @_latLng(latC, longC)
       mapTypeId: google.maps.MapTypeId.ROADMAP
 
-    @map = new google.maps.Map(@el[0], options)
-    @heatmap = new HeatmapOverlay(@map, {
-      radius  : 15,
+    @_map = new google.maps.Map(@el[0], options)
+    @_heatmap = new HeatmapOverlay(@_map, {
+      radius  : 9,
       visible : true,
-      opacity : 60
+      opacity : 70
     });
 
-    if @options.drawBounds then @_drawBorder()
+    if @options.drawBounds then @drawBorder()
 
-    google.maps.event.addListenerOnce(@map, "idle", =>
+    google.maps.event.addListenerOnce(@_map, "idle", =>
       @trigger("ready")
     )
 
   _latLng: (latitude, longitude) ->
     new google.maps.LatLng(latitude, longitude)
 
-  _drawBorder: ->
+  drawBorder: ->
+    @_border.setMap(null) if @_border
+
     bounds = @options.bounds
-    @drawBox("#FF0000",
+    @_border = @drawBox("#FF0000",
       bounds.maxLatitude, bounds.minLatitude,
       bounds.maxLongitude, bounds.minLongitude
     )
+
+  hideBorder: ->
+    return unless @_border
+    @_border.setMap(null)
+    @_border = null
 
   drawBox: (color, lat1, lat2, long1, long2) ->
     boxCoords = [
@@ -56,8 +63,8 @@ class window.Map extends Backbone.View
       fillColor: color,
       fillOpacity: 0
     )
-    box.setMap(@map)
+    box.setMap(@_map)
     box
 
   setHeatmapDataSet: (dataset) ->
-    @heatmap.setDataSet(dataset)
+    @_heatmap.setDataSet(dataset)

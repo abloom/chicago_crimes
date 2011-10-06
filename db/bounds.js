@@ -36,3 +36,8 @@ db.runCommand({
   reduce: r,
   out: "bounds"
 });
+
+db.bounds.insert({
+  _id: "charges",
+  value: db.incidents.distinct("charge").sort()
+})

@@ -14,4 +14,5 @@
 //
 //= require zone
 //= require map
+//= require views
 //= require bootstrap

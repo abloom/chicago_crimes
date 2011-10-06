@@ -1,8 +1,24 @@
 <script type="text/javascript">
-  Map.boundsData = <%= @bounds.to_json.html_safe %>;
+  App.boundsData = <%= @bounds.to_json.html_safe %>;
 </script>
 
 <div id="wrapper">
-  <div id="controls"></div>
+  <div id="controls">
+    <h2>Chicago Crime Map</h2>
+    <div id="date-control">
+      <label>Showing</label>
+      <span id="date"></span>
+      <div id="slider"></div>
+    </div>
+
+    <fieldset id="debug-controls">
+      <legend>Debug Controls</legend>
+
+      <input type="checkbox" name="zone-box" value="visible"><label>Zone Box</label>
+      <br />
+      <input type="checkbox" name="border-box" value="visible"><label>Border Box</label>
+    </fieldset>
+  </div>
+
   <div id="map"></div>
 </div>

@@ -4,15 +4,28 @@ class window.Zone extends Backbone.Model
       sum + count
     , 0)
 
-  drawBox: (map) ->
-    coordinates = @get("coordinates")
-    @box ||= map.drawBox("#0000FF",
-      coordinates[0][0], coordinates[1][0],
-      coordinates[0][1], coordinates[1][1]
-    )
+  centeredLongitude: ->
+    coords = @get("coordinates")
+    middle = (coords[1][1] - coords[0][1])/2.0
+    middle + coords[0][1]
 
-  highlight: ->
-    @box.setOptions({fillOpacity: 0.15})
+  centeredLatitude: ->
+    coords = @get("coordinates")
+    middle = (coords[1][0] - coords[0][0])/2.0
+    middle + coords[0][0]
+
+  drawBox: (map) ->
+    @_box.setMap(null) if @_box
+
+    coordinates = @get("coordinates")
+    @_box = map.drawBox("#0000FF",
+      coordinates[0][0], coordinates[1][0],
+      coordinates[0][1], coordinates[1][1])
+
+  hideBox: ->
+    return unless @_box
+    @_box.setMap(null)
+    @_box = null
 
 class window.ZoneCollection extends Backbone.Collection
   model: Zone
@@ -21,7 +34,7 @@ class window.ZoneCollection extends Backbone.Collection
 
   url: ->
     obj =
-      date: "#{@date.getFullYear()}-#{@date.getMonth()+1}-#{@date.getDate()}"
+      date: "#{@date.getUTCFullYear()}-#{@date.getUTCMonth()+1}-#{@date.getUTCDate()}"
 
     "/densities?#{$.param(obj)}"
 
@@ -33,8 +46,8 @@ class window.ZoneCollection extends Backbone.Collection
     @forEach (zone) ->
       coords = zone.get("coordinates")
       data =
-        lat: coords[0][0]
-        lng: coords[0][1]
+        lat: zone.centeredLatitude()
+        lng: zone.centeredLongitude()
         count: zone.total()
 
       set.data.push(data)

@@ -16,8 +16,6 @@ class Incident
   ensure_index [[:location, "2d"]] # geo-spacial index
 
   class << self
-    extend ActiveSupport::Memoizable
-
     def density_in_cell_for_day_range(x, y, divisions, date1, date2)
       coordinates = Bounds.box(x, y, divisions)
       query = {
@@ -38,11 +36,6 @@ class Incident
         out: { merge: "densities" }
       })
     end
-
-    def charges
-      collection.distinct("charge")
-    end
-    memoize :charges
 
   private
     def cell_query(coordinates)
@@ -89,7 +82,7 @@ class Incident
       <<-JS
       function(k, values) {
         var results = values.pop(),
-            charges = #{charges.to_json};
+            charges = #{Bounds.charges.to_json};
 
         values.forEach(function(value) {
           var key;

@@ -3,6 +3,7 @@
  * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *= require_self
+ *= require jquery-ui-1.8.16.custom
 */
 
 html {
@@ -20,17 +21,27 @@ html {
   clear: both;
   margin: auto;
   width: 960px;
+
+  #controls {
+    background-color: white;
+    float: left;
+    height: 470px;
+    width: 300px;
+    padding: 15px 20px;
+
+    #slider {
+      margin: 10px 0px
+    }
+
+    #date {
+    }
+  }
+
+  #map {
+    float: left;
+    height: 760px;
+    width: 620px;
+  }
 }
 
-#controls {
-  background-color: white;
-  float: left;
-  height: 500px;
-  width: 340px;
-}
 
-#map {
-  float: left;
-  height: 760px;
-  width: 620px;
-}

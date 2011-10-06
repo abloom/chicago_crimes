@@ -7,7 +7,6 @@ $ ->
   window.map = new MapView
     el         : $("#map")
     bounds     : App.boundsData
-    drawBounds : true
 
   window.dateSlider = new DateSliderView
     el      : $("#date-control")

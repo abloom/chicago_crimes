@@ -4,6 +4,7 @@
  * the top of the compiled file, but it's generally better to create a new file per style scope.
  *= require_self
  *= require jquery-ui-1.8.16.custom
+ *= require cssreset-min
 */
 
 html {
@@ -22,18 +23,37 @@ html {
   margin: auto;
   width: 960px;
 
+  label {
+    color: grey;
+  }
+
+  input[type=checkbox] {
+    margin-right: 5px;
+  }
+
   #controls {
+    position: relative;
     background-color: white;
     float: left;
     height: 470px;
     width: 300px;
     padding: 15px 20px;
 
+    h1 {
+      margin: 5px 0 10px;
+      font-size: 200%;
+    }
     #slider {
-      margin: 10px 0px
+      margin: 10px 10px;
     }
 
-    #date {
+    #debug-controls {
+      position: absolute;
+      bottom: 0px;
+      width: 290px;
+      margin: 10px 0;
+      padding: 3px 5px 8px;
+      border: 1px solid grey;
     }
   }
 

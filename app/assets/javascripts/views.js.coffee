@@ -17,16 +17,7 @@ class window.DateSliderView extends Backbone.View
 class window.DebugControlsView extends Backbone.View
   events: {
     "click :checkbox[name='zone-box']": 'zoneBoxDidToggle'
-    "click :checkbox[name='border-box']": 'borderBoxDidToggle'
   }
-
-  borderBoxDidToggle: (evt) ->
-    cmd = if $(evt.target).attr("checked")
-      "drawBorder"
-    else
-      "hideBorder"
-
-    @options.map[cmd]()
 
   zoneBoxDidToggle: (evt) ->
     [cmd, arg] = if $(evt.target).attr("checked")

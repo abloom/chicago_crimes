@@ -24,28 +24,11 @@ class window.MapView extends Backbone.View
       opacity : 70
     });
 
-    if @options.drawBounds then @drawBorder()
-
-    google.maps.event.addListenerOnce(@_map, "idle", =>
+    google.maps.event.addListenerOnce @_map, "idle", =>
       @trigger("ready")
-    )
 
   _latLng: (latitude, longitude) ->
     new google.maps.LatLng(latitude, longitude)
-
-  drawBorder: ->
-    @_border.setMap(null) if @_border
-
-    bounds = @options.bounds
-    @_border = @drawBox("#FF0000",
-      bounds.maxLatitude, bounds.minLatitude,
-      bounds.maxLongitude, bounds.minLongitude
-    )
-
-  hideBorder: ->
-    return unless @_border
-    @_border.setMap(null)
-    @_border = null
 
   drawBox: (color, lat1, lat2, long1, long2) ->
     boxCoords = [

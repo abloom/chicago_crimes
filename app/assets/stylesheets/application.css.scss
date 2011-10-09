@@ -31,6 +31,10 @@ html {
     margin-right: 5px;
   }
 
+  input[type=radio] {
+    margin-left: 5px;
+  }
+
   #controls {
     position: relative;
     background-color: white;
@@ -43,8 +47,26 @@ html {
       margin: 5px 0 10px;
       font-size: 200%;
     }
-    #slider {
-      margin: 10px 10px;
+
+    #date-control {
+      overflow: auto;
+
+      #slider {
+        width: 267px;
+        margin: 10px 10px 10px 13px;
+      }
+
+      #min-date {
+        float: left;
+      }
+
+      #max-date {
+        float: right;
+      }
+    }
+
+    #scale-control {
+      margin-top: 8px;
     }
 
     #debug-controls {

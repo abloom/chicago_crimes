@@ -1,8 +1,12 @@
 class DensitiesController < ApplicationController
+  require_params :date, :scale, :only => :index
+
   def index
     y, m, d = params[:date].split("-")
     time = Time.utc(y, m, d)
-    render json: serialize(Density.by_date(time))
+    densities = Density.by_date(time)
+
+    render json: serialize(densities)
   end
 
 private

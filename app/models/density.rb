@@ -37,3 +37,11 @@ class Density
     where(:'value.start_date'.lte => date, :'value.end_date'.gte => date)
   end
 end
+
+class YearDensity < Density
+  set_collection_name "year.densities"
+end
+
+class MonthDensity < Density
+  set_collection_name "month.densities"
+end

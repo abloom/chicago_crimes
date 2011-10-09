@@ -7,6 +7,8 @@ class window.DateSliderView extends Backbone.View
 
   render: ->
     @$('#date').text(2001)
+    @$('#min-date').text(@minYear())
+    @$('#max-date').text(@maxYear())
 
     @_slider = @$('#slider').slider
       value : @minYear()

@@ -7,9 +7,20 @@
     <h1>Chicago Crime Map</h1>
 
     <div id="date-control">
-      <label>Showing</label>
+      <span>Date:</span>
       <span id="date"></span>
       <div id="slider"></div>
+      <span id="min-date"></span>
+      <span id="max-date"></span>
+    </div>
+
+    <div id="scale-control">
+      <span>Scale:</span>
+      <input type="radio" name="scale" value="year" id="scale_year">
+      <label for="scale_year">Year</label>
+
+      <input type="radio" name="scale" value="month" id="scale_month">
+      <label for="scale_month">Month</label>
     </div>
 
     <fieldset id="debug-controls">

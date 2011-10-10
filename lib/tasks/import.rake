@@ -4,8 +4,16 @@ task :import => :environment do
   Importer.run
 end
 
-desc "Calculate densities"
-task :density => :environment do
-  require 'density_calculator'
-  DensityCalculator.run
+namespace :density do
+  desc "Calculate monthly densities"
+  task :month => :environment do
+    require 'density_calculator'
+    DensityCalculator.run_month
+  end
+
+  desc "Calculate yearly densities"
+  task :year => :environment do
+    require 'density_calculator'
+    DensityCalculator.run_year
+  end
 end

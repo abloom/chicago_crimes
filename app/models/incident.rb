@@ -16,7 +16,7 @@ class Incident
   ensure_index [[:location, "2d"]] # geo-spacial index
 
   class << self
-    def density_in_cell_for_day_range(x, y, divisions, date1, date2)
+    def density_in_cell_for_day_range(x, y, divisions, date1, date2, scale)
       coordinates = Bounds.box(x, y, divisions)
       query = {
         :location => {
@@ -33,7 +33,7 @@ class Incident
       map = mapper(x, y, date1, date2, coordinates)
       collection.map_reduce(map, reducer, {
         query: query,
-        out: { merge: "densities" }
+        out: { merge: "#{scale}.densities" }
       })
     end
 

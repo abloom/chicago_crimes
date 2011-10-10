@@ -4,12 +4,21 @@ class DensitiesController < ApplicationController
   def index
     y, m, d = params[:date].split("-")
     time = Time.utc(y, m, d)
-    densities = Density.by_date(time)
+    densities = density.by_date(time)
 
     render json: serialize(densities)
   end
 
 private
+  def density
+    return case params[:scale]
+    when "year"
+      YearDensity
+    when "month"
+      MonthDensity
+    end
+  end
+
   def serialize(objs)
     objs.map do |obj|
       {

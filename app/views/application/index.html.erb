@@ -1,5 +1,7 @@
 <script type="text/javascript">
-  App.boundsData = <%= @bounds.to_json.html_safe %>;
+  window.App = new Controller({
+    bounds: <%= @bounds.to_json.html_safe %>
+  })
 </script>
 
 <div id="wrapper">

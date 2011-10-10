@@ -12,7 +12,10 @@
 //= require heatmap
 //= require heatmap-gmaps
 //
+//= require controller
 //= require zone
 //= require map
-//= require views
+//= require date_slider
+//= require debug_controls
+//= require scale_controls
 //= require bootstrap

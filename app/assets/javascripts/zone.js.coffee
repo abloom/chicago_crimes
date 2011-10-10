@@ -29,12 +29,15 @@ class window.Zone extends Backbone.Model
 
 class window.ZoneCollection extends Backbone.Collection
   model: Zone
+
   initialize: (models, options) ->
     @date = options.date
+    @scale = options.scale
 
   url: ->
     obj =
       date: "#{@date.getUTCFullYear()}-#{@date.getUTCMonth()+1}-#{@date.getUTCDate()}"
+      scale: @scale
 
     "/densities?#{$.param(obj)}"
 
@@ -44,7 +47,6 @@ class window.ZoneCollection extends Backbone.Collection
       data: []
 
     @forEach (zone) ->
-      coords = zone.get("coordinates")
       data =
         lat: zone.centeredLatitude()
         lng: zone.centeredLongitude()

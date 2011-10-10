@@ -19,13 +19,13 @@ class window.MapView extends Backbone.View
 
     @_map = new google.maps.Map(@el[0], options)
     @_heatmap = new HeatmapOverlay(@_map, {
-      radius  : 9,
+      radius  : 10,
       visible : true,
       opacity : 70
     });
 
     google.maps.event.addListenerOnce @_map, "idle", =>
-      @trigger("ready")
+      @options.ready()
 
   _latLng: (latitude, longitude) ->
     new google.maps.LatLng(latitude, longitude)

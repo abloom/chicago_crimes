@@ -1,7 +1,5 @@
 $ ->
-  App.setZones new ZoneCollection [],
-    date  : App.currentDate
-    scale : App.currentScale
+  App.updateZones()
 
   App.addView "map", new MapView
     el     : $("#map")

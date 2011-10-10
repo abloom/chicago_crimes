@@ -7,6 +7,9 @@ class window.Controller extends Backbone.Router
     @currentScale = "year"
     @views = {}
 
+    @bind("change:currentScale", @setZones, @)
+    @bind("change:currentDate", @setZones, @)
+
   setCurrentScale: (scale) ->
     @currentScale = scale
     @trigger("change:currentScale")
@@ -21,8 +24,12 @@ class window.Controller extends Backbone.Router
     view.render()
 
   # setting the Apps zone will automatically fetch it
-  setZones: (zones) ->
-    @zones = zones
+  setZones: ->
+    @zones = new ZoneCollection [],
+      date: @currentDate
+      scale: @currentScale
+
+    @_zonesDidFetch = false
     @zones.fetch
       success: =>
         @zonesDidFetch()
